@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3-2-1 Futbol Kesişim Oyunu</title>
+  <meta name="description" content="İki kriter seç — kulüp veya milliyet — ve kesişimde kalan oyuncuları bul! Harman'ın 3-2-1 oyunundan ilham alan futbol bilgi oyunu." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Background decoration -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-badge">⚽ FUTBOLKESİŞİM</div>
+      <h1 class="header-title">3-2-1</h1>
+      <p class="header-subtitle">İki kriter seç, kesişimi bul</p>
+    </header>
+
+    <!-- Loading State -->
+    <div class="loading-screen" id="loadingScreen">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Oyuncu veritabanı yükleniyor…</p>
+      <div class="loading-bar"><div class="loading-bar-fill" id="loadingBarFill"></div></div>
+    </div>
+
+    <!-- Main Game UI -->
+    <main class="game-ui" id="gameUI" style="display:none">
+
+      <!-- Selectors Row -->
+      <div class="selectors-row">
+        <!-- Selector A -->
+        <div class="selector-card" id="selectorA">
+          <div class="selector-label">
+            <span class="selector-num">1</span>
+            <span>İlk Kriter</span>
+          </div>
+          <div class="search-wrapper">
+            <div class="search-type-toggle" id="typeToggleA" role="group" aria-label="Tip seçimi A">
+              <button class="type-btn active" data-type="club" id="typeBtnClubA" aria-pressed="true">
+                <span class="type-icon">🏟️</span> Kulüp
+              </button>
+              <button class="type-btn" data-type="nation" id="typeBtnNationA" aria-pressed="false">
+                <span class="type-icon">🌍</span> Milliyet
+              </button>
+            </div>
+            <div class="autocomplete-wrapper">
+              <input
+                type="text"
+                class="search-input"
+                id="inputA"
+                placeholder="Kulüp adı yaz…"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="İlk kriter arama"
+                aria-autocomplete="list"
+                aria-controls="suggestionsA"
+              />
+              <button class="clear-input-btn" id="clearA" aria-label="Temizle" style="display:none">×</button>
+              <ul class="suggestions-list" id="suggestionsA" role="listbox" aria-label="Öneriler"></ul>
+            </div>
+            <div class="selected-chip" id="chipA" style="display:none">
+              <span class="chip-icon" id="chipIconA"></span>
+              <span class="chip-text" id="chipTextA"></span>
+              <button class="chip-remove" id="removeA" aria-label="Seçimi kaldır">×</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VS Divider -->
+        <div class="vs-divider">
+          <div class="vs-ring">
+            <span class="vs-text">∩</span>
+          </div>
+          <div class="vs-line"></div>
+        </div>
+
+        <!-- Selector B -->
+        <div class="selector-card" id="selectorB">
+          <div class="selector-label">
+            <span class="selector-num">2</span>
+            <span>İkinci Kriter</span>
+          </div>
+          <div class="search-wrapper">
+            <div class="search-type-toggle" id="typeToggleB" role="group" aria-label="Tip seçimi B">
+              <button class="type-btn active" data-type="club" id="typeBtnClubB" aria-pressed="true">
+                <span class="type-icon">🏟️</span> Kulüp
+              </button>
+              <button class="type-btn" data-type="nation" id="typeBtnNationB" aria-pressed="false">
+                <span class="type-icon">🌍</span> Milliyet
+              </button>
+            </div>
+            <div class="autocomplete-wrapper">
+              <input
+                type="text"
+                class="search-input"
+                id="inputB"
+                placeholder="Kulüp adı yaz…"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="İkinci kriter arama"
+                aria-autocomplete="list"
+                aria-controls="suggestionsB"
+              />
+              <button class="clear-input-btn" id="clearB" aria-label="Temizle" style="display:none">×</button>
+              <ul class="suggestions-list" id="suggestionsB" role="listbox" aria-label="Öneriler"></ul>
+            </div>
+            <div class="selected-chip" id="chipB" style="display:none">
+              <span class="chip-icon" id="chipIconB"></span>
+              <span class="chip-text" id="chipTextB"></span>
+              <button class="chip-remove" id="removeB" aria-label="Seçimi kaldır">×</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div class="warning-banner" id="warningBanner" style="display:none">
+        <span class="warning-icon">⚠️</span>
+        <span id="warningText">İki milliyet seçimi anlamsız — bir oyuncunun tek milliyeti olabilir.</span>
+      </div>
+
+      <!-- Results Area -->
+      <section class="results-section" id="resultsSection" style="display:none">
+        <div class="results-header">
+          <div class="results-count" id="resultsCount"></div>
+          <button class="reset-btn" id="resetBtn" aria-label="Oyunu sıfırla">
+            <span class="reset-icon">↺</span> Yeni Tur
+          </button>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="emptyState" style="display:none">
+          <div class="empty-icon">🔍</div>
+          <p class="empty-title">Oyuncu bulunamadı</p>
+          <p class="empty-subtitle">Bu iki kritere uyan hiçbir oyuncu yok. Farklı bir kombinasyon dene!</p>
+        </div>
+
+        <!-- Results list -->
+        <ul class="results-list" id="resultsList" role="list" aria-label="Sonuç oyuncuları"></ul>
+      </section>
+
+      <!-- Hint when nothing selected yet -->
+      <div class="hint-area" id="hintArea">
+        <div class="hint-cards">
+          <div class="hint-card">
+            <div class="hint-card-icon">🏟️ + 🏟️</div>
+            <div class="hint-card-label">Kulüp × Kulüp</div>
+            <div class="hint-card-example">Real Madrid & Arsenal'de oynamış oyuncular</div>
+          </div>
+          <div class="hint-card">
+            <div class="hint-card-icon">🌍 + 🏟️</div>
+            <div class="hint-card-label">Milliyet × Kulüp</div>
+            <div class="hint-card-example">Brezilyalı & Chelsea'de oynamış oyuncular</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      <span>Harman'ın 3-2-1 oyunundan ilham alınmıştır</span>
+      <span class="footer-dot">·</span>
+      <span id="playerCount">— oyuncu</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

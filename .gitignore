@@ -1,0 +1,24 @@
+# ── Veri dosyaları (gizli) ──────────────────────────────────
+*.csv
+*.xlsx
+*.xls
+data/
+
+# ── Python cache ─────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ── OS dosyaları ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor ───────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Node (eğer ileride kullanılırsa) ────────────────────────
+node_modules/
